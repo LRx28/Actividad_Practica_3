@@ -22,7 +22,7 @@ public partial class Clientes : Form
     private void btn_Cargar_Click(object sender, EventArgs e)
     {
 
-        string connectionString = @"Data Source=LR;Initial Catalog=Actividad_Practica_1;Integrated Security=True;";
+        string connectionString = @"Data Source=LR;Initial Catalog=Actividad_Practica_1;Integrated Security=True; TrustServerCertificate=True;";
 
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
@@ -72,18 +72,24 @@ public partial class Clientes : Form
             return;
         }
 
-        string connectionString = @"Data Source=LR;Initial Catalog=Actividad_Practica_1;Integrated Security=True;";
+        string connectionString = @"Data Source=LR;Initial Catalog=Actividad_Practica_1;Integrated Security=True; TrustServerCertificate=True;";
 
         using (SqlConnection connection = new SqlConnection(connectionString))
         {
             connection.Open();
 
-            string queryInsertarClientes = @"INSERT INTO Clientes (Nombre, Telefono, Correo, Direccion)" +
-                " VALUES ('" + txt_Nombre.Text + "','" + txt_Telefono.Text + "' , '" + txt_Correo.Text + "', '" + txt_Direccion.Text + "'";
+            string queryInsertarClientes = @"INSERT INTO Clientes (NombreCompleto, Telefono, CorreoElectronico, Direccion)
+            VALUES (@Nombre, @Telefono, @Correo, @Direccion)"; 
 
             using (SqlCommand cmd = new SqlCommand(queryInsertarClientes, connection))
             {
+                    cmd.Parameters.AddWithValue("@Nombre", txt_Nombre.Text);
+                    cmd.Parameters.AddWithValue("@Telefono", txt_Telefono.Text);
+                    cmd.Parameters.AddWithValue("@Correo", txt_Correo.Text);
+                    cmd.Parameters.AddWithValue("@Direccion", txt_Direccion.Text);
+                
                 int rowsAffected = cmd.ExecuteNonQuery();
+
                 if (rowsAffected > 0)
                 {
                     MessageBox.Show("Se ha insertado al cliente en la base de datos correctamente.");
