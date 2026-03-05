@@ -79,15 +79,15 @@ public partial class Clientes : Form
             connection.Open();
 
             string queryInsertarClientes = @"INSERT INTO Clientes (NombreCompleto, Telefono, CorreoElectronico, Direccion)
-            VALUES (@Nombre, @Telefono, @Correo, @Direccion)"; 
+            VALUES (@Nombre, @Telefono, @Correo, @Direccion)";
 
             using (SqlCommand cmd = new SqlCommand(queryInsertarClientes, connection))
             {
-                    cmd.Parameters.AddWithValue("@Nombre", txt_Nombre.Text);
-                    cmd.Parameters.AddWithValue("@Telefono", txt_Telefono.Text);
-                    cmd.Parameters.AddWithValue("@Correo", txt_Correo.Text);
-                    cmd.Parameters.AddWithValue("@Direccion", txt_Direccion.Text);
-                
+                cmd.Parameters.AddWithValue("@Nombre", txt_Nombre.Text);
+                cmd.Parameters.AddWithValue("@Telefono", txt_Telefono.Text);
+                cmd.Parameters.AddWithValue("@Correo", txt_Correo.Text);
+                cmd.Parameters.AddWithValue("@Direccion", txt_Direccion.Text);
+
                 int rowsAffected = cmd.ExecuteNonQuery();
 
                 if (rowsAffected > 0)
@@ -104,8 +104,33 @@ public partial class Clientes : Form
 
     private void btn_Eliminar_Click(object sender, EventArgs e)
     {
+        if (string.IsNullOrEmpty(txt_IdEliminar.Text))
+        {
+            MessageBox.Show("Debe introducir un ID válido.");
+            return;
+        }
 
+        string connectionString = @"Data Source=LR;Initial Catalog=Actividad_Practica_1;Integrated Security=True; TrustServerCertificate=True;";
+        using (SqlConnection connection = new SqlConnection(connectionString))
+        {
+            connection.Open();
+            string queryEliminarCliente = @"DELETE FROM Clientes WHERE ClienteID = @ClienteID";
+            using (SqlCommand cmd = new SqlCommand(queryEliminarCliente, connection))
+            {
+                cmd.Parameters.AddWithValue("@ClienteID", txt_IdEliminar.Text);
+                int rowsAffected = cmd.ExecuteNonQuery();
+                if (rowsAffected > 0)
+                {
+                    MessageBox.Show("Se ha eliminado al cliente de la base de datos correctamente.");
+                }
+                else
+                {
+                    MessageBox.Show("No se encontró un cliente con el ID proporcionado.");
+
+                }
+                connection.Close();
+            }
+
+        }
     }
 }
-
-
